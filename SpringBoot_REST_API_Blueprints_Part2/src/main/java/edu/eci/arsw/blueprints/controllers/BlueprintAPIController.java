@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -80,6 +81,22 @@ public class BlueprintAPIController {
             return new ResponseEntity<>("No se registro",HttpStatus.FORBIDDEN);
         }
 
+    }
+
+    @PutMapping(value = "/{author}/{name}")
+    public ResponseEntity<?> putBlueprint(@PathVariable String author, @PathVariable String name, @RequestBody Blueprint blueprint){
+        Blueprint blueprintNew = null;
+        try {
+            blueprintNew = bps.getBlueprint(author, name);
+            blueprintNew.setAuthor(blueprint.getAuthor());
+            blueprintNew.setName(blueprint.getName());
+            blueprintNew.setPoints(blueprint.getPoints());
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        } catch (BlueprintNotFoundException e) {
+            return new ResponseEntity<>("Espera",HttpStatus.NOT_FOUND);
+        }catch (Exception e) {
+            return new ResponseEntity<>("Error interno del servidor", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
 
